@@ -1,0 +1,58 @@
+<configuration>
+  <system.webServer>	
+	<rewrite>
+      <rules>
+        <rule name="Imported Rule 1" stopProcessing="true">
+          <match url="^(.*)/$" ignoreCase="false" />
+          <conditions>
+            <add input="{REQUEST_FILENAME}" matchType="IsDirectory" ignoreCase="false" negate="true" />
+          </conditions>
+          <action type="Redirect" redirectType="Permanent" url="/{R:1}" />
+        </rule>
+        <rule name="Imported Rule 2" stopProcessing="true">
+          <match url="^" ignoreCase="false" />
+          <conditions>
+            <add input="{REQUEST_FILENAME}" matchType="IsDirectory" ignoreCase="false" negate="true" />
+            <add input="{REQUEST_FILENAME}" matchType="IsFile" ignoreCase="false" negate="true" />
+          </conditions>
+          <action type="Rewrite" url="index.php" />
+        </rule>
+		<rule name="Capture Origin Header"> 
+			<match url=".*" /> 
+			<conditions> 
+				<add input="{HTTP_ORIGIN}" pattern=".+" /> 
+			</conditions> 
+			<serverVariables> 
+				<set name="CAPTURED_ORIGIN" value="{C:0}" /> 
+			</serverVariables> 
+			<action type="None" /> 
+		</rule> 
+      </rules> 
+      <outboundRules> 
+        <rule name="Set-Access-Control-Allow-Origin for known origins"> 
+          <match serverVariable="RESPONSE_Access-Control-Allow-Origin" pattern=".+" negate="true" /> 
+            <conditions> 
+              <add input="{AllowedOrigins:{CAPTURED_ORIGIN}}" pattern=".+" /> 
+            </conditions> 
+            <action type="Rewrite" value="{C:0}" /> 
+        </rule> 
+        </outboundRules> 
+        <rewriteMaps> 
+          <rewriteMap name="AllowedOrigins"> 
+            <add key="web.gruposol.com.br" value="web.gruposol.com.br" /> 
+            <add key="intranet.gruposol.com.br" value="intranet.gruposol.com.br" /> 
+          </rewriteMap> 
+        </rewriteMaps>     
+	</rewrite>
+    <cors enabled="false">
+       <clear />
+    </cors>
+    <httpProtocol>
+      <customHeaders>
+		<add name="Access-Control-Allow-Origin" value="*" />
+		<add name="Access-Control-Allow-Methods" value="*" />
+		<add name="Access-Control-Allow-Headers" value="Access-Control-Allow-Origin,Origin,Authorization,Content-Type,application/x-www-form-urlencoded" />
+      </customHeaders>
+    </httpProtocol>
+  </system.webServer>
+</configuration>
