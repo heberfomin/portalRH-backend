@@ -15,7 +15,10 @@ use Illuminate\Http\Request;
 
 Route::post('auth/login', 'Api\AuthController@login');
 Route::post('auth/refresh','Api\AuthController@refresh');   
-Route::post('auth/logout','Api\AuthController@logout');   
+Route::post('auth/logout','Api\AuthController@logout');
+
+// Sincronismo de funcionarios Datasul (CD0401 grupo 50) -> tbFuncionarios; header API-KEY = INTEGRATION_KEY
+Route::post('postSyncFuncionarios', 'Api\IntegracaoController@postFuncionarios');
 
 Route::group(['middleware' => 'jwt.auth', 'namespace' => 'Api\\'], function() {
     
