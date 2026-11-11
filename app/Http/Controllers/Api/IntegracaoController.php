@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Log;
  *   - inativo inexistente = ignorado; nunca apaga.
  *   - ativo -> indAtivo 1 e datDemissao NULL; inativo -> indAtivo 0 e datDemissao =
  *     dataInativacao (ou mantem a atual).
+ *   - datAdmissao so na inclusao (data-implant do emitente nem sempre e a admissao).
  *   - nao mexe em codRH, desIP, latitude/longitude (sao do portal).
  */
 class IntegracaoController extends Controller
@@ -99,8 +100,9 @@ class IntegracaoController extends Controller
             if ($cpf !== '') {
                 $dados['codIDFederal'] = $cpf;
             }
+            // data-implant do emitente nem sempre e a admissao real: so usa na inclusao
             $adm = $this->data(isset($f['dataAdmissao']) ? $f['dataAdmissao'] : null);
-            if ($adm) {
+            if ($adm && !$atual) {
                 $dados['datAdmissao'] = $adm;
             }
             if ($ativo) {
